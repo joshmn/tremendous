@@ -30,7 +30,7 @@ module Tremendous
       @member_endpoints ||= {}
     end
 
-    def self.member_method(name, verb, endpoint = nil, &block)
+    def self.member_method(name, verb, endpoint: nil, &block)
       member_endpoints[name] = verb
       define_singleton_method(name) do |id, **args|
         url = [resource_path, id, endpoint || name].join('/')

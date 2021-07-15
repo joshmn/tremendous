@@ -60,12 +60,21 @@ module StubResources
     url = options[:url] || url_builder(resource, action: action)
 
     verb = options[:method] || verb_for(resource, action)
-    if options[:fixture] != false
+    if options[:fixture] != false && !options.key?(:return)
       fixture_path = File.join(__dir__ + "/fixtures/#{resource.resource_key.tableize}/#{action}.json")
       body = File.read(fixture_path)
-      stub_request(verb, "#{Tremendous.config.endpoint}#{url}").to_return(status: 200, body: body)
+      returning = { status: 200, body: body }
+      stub_request(verb, "#{Tremendous.config.endpoint}#{url}").to_return(returning)
+      returning[:body] = JSON.parse(body)
+      returning
+    elsif returning = options[:return]
+      returning[:headers] ||= {}
+      returning[:headers].merge!({ 'Content-Type' => 'application/json' })
+      stub_request(verb, "#{Tremendous.config.endpoint}#{url}").to_return(returning)
+      returning
     else
       stub_request(verb, "#{Tremendous.config.endpoint}#{url}").to_return(status: 200)
+      { status: 200 }
     end
   end
 

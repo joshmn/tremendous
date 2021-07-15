@@ -14,4 +14,14 @@ module Tremendous
       end
     end
   end
+
+  class BadRequest < Error; end
+
+  class Unauthorized < Error; end
+
+  class PaymentFailure < Error; end
+
+  class NotFound < Error; end
+
+  class RateLimited < Error; end
 end

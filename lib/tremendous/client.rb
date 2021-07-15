@@ -3,8 +3,17 @@
 module Tremendous
   class Client
     class << self
+      ERROR_CODE_TO_ERROR_CLASS = {
+        400 => BadRequest,
+        401 => Unauthorized,
+        402 => PaymentFailure,
+        404 => NotFound,
+        429 => RateLimited
+      }.freeze
+
       def handle_error_response(resp)
-        return Error.new(resp) if resp.status.between?(400, 500)
+        klass = ERROR_CODE_TO_ERROR_CLASS[resp.status] || Error
+        return klass.new(resp) if resp.status.between?(400, 500)
 
         false
       end
