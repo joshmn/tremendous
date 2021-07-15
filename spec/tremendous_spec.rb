@@ -1,11 +1,11 @@
-
+# frozen_string_literal: true
 
 RSpec.describe Tremendous do
-  it "has a version number" do
+  it 'has a version number' do
     expect(Tremendous::VERSION).not_to be nil
   end
 
-  it "generates fixtures lol" do
+  it 'generates fixtures lol' do
     if ENV['CREATE_FIXTURES']
       members = Tremendous::Member.list
       Tremendous::Member.retrieve(members.first.id)
@@ -21,22 +21,22 @@ RSpec.describe Tremendous do
       products = Tremendous::Product.list
       puts products.inspect
       order = Tremendous::Order.create({
-                                         "external_id": "OPTIONAL ID FROM CLIENT SYSTEM",
+                                         "external_id": 'OPTIONAL ID FROM CLIENT SYSTEM',
                                          "payment": {
                                            "funding_source_id": funding_sources.first.id
                                          },
                                          "reward": {
                                            "value": {
                                              "denomination": 30,
-                                             "currency_code": "USD"
+                                             "currency_code": 'USD'
                                            },
                                            "campaign_id": campaigns.first.id,
                                            "recipient": {
-                                             "name": "Denise Miller",
-                                             "email": "j@josh.mn"
+                                             "name": 'Denise Miller',
+                                             "email": 'j@josh.mn'
                                            },
                                            "delivery": {
-                                             "method": "EMAIL",
+                                             "method": 'EMAIL',
                                              "meta": {}
                                            }
                                          }
@@ -44,12 +44,11 @@ RSpec.describe Tremendous do
       puts order.inspect
       Tremendous::Order.retrieve(order.id)
       invoice = Tremendous::Invoice.create({
-                                             "po_number": "[ID FROM CLIENT]",
+                                             "po_number": '[ID FROM CLIENT]',
                                              "amount": 2000
                                            })
 
       puts invoice.inspect
     end
-
   end
 end

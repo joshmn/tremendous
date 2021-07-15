@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Tremendous
   class Order < APIResource
     extend Operations::Retrieve

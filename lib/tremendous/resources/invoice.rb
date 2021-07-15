@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Tremendous
   class Invoice < APIResource
     extend Operations::Create
@@ -6,7 +8,7 @@ module Tremendous
     extend Operations::Destroy
 
     member_method :pdf, :get do |resp|
-      Utils.build_object(OpenStruct.new(parsed_response: {"invoice" => {"file" => resp.body} }), self)
+      Utils.build_object(OpenStruct.new(parsed_response: { 'invoice' => { 'file' => resp.body } }), self)
     end
   end
 end

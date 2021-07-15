@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tremendous/api_resource'
 
 require 'tremendous/operations'

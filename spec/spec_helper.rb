@@ -1,5 +1,7 @@
-require "bundler/setup"
-require "tremendous"
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'tremendous'
 require 'webmock'
 require 'webmock/rspec'
 require 'pry'
@@ -17,26 +19,29 @@ module Recorder
 
     def call(req, resp)
       request = {
-                  uri: req.uri.to_s,
-                  method: req.method.to_s.upcase,
-                  headers: req.headers,
-                  body: req.body
-                }.to_json
-      real_path = req.uri.path.split("api/v2/")[1].split("/")
+        uri: req.uri.to_s,
+        method: req.method.to_s.upcase,
+        headers: req.headers,
+        body: req.body
+      }.to_json
+      real_path = req.uri.path.split('api/v2/')[1].split('/')
 
       klass = real_path[0]
-      if real_path.size == 3
+      case real_path.size
+      when 3
         action = real_path.last
-      elsif real_path.size == 1
-        if req.method == :post
+      when 1
+        case req.method
+        when :post
           action = :create
-        elsif req.method == :get
+        when :get
           action = :list
         end
-      elsif real_path.size == 2
-        if req.method == :get
+      when 2
+        case req.method
+        when :get
           action = :retrieve
-        elsif req.method == :delete
+        when :delete
           action = :delete
         end
       end
@@ -52,11 +57,7 @@ end
 
 module StubResources
   def stub_resource(resource, action, **options)
-    if options[:url]
-      url = options[:url]
-    else
-      url = url_builder(resource, action: action)
-    end
+    url = options[:url] || url_builder(resource, action: action)
 
     verb = options[:method] || verb_for(resource, action)
     if options[:fixture] != false
@@ -71,30 +72,22 @@ module StubResources
   private
 
   def url_builder(resource, action)
-    if action == :list || :create
-      return resource.resource_path
-    end
+    return resource.resource_path if action == :list || :create
   end
 
   def verb_for(resource, action)
-    if action == :list || :retrieve
-      return :get
-    end
+    return :get if action == :list || :retrieve
 
-    if action == :create
-      return :post
-    end
+    return :post if action == :create
 
-    if action == :destroy
-      return :delete
-    end
+    return :delete if action == :destroy
 
     resource.member_endpoints[action] || raise(ArgumentError, "unknown type for #{action}")
   end
 end
 
 RSpec.configure do |config|
-  config.example_status_persistence_file_path = ".rspec_status"
+  config.example_status_persistence_file_path = '.rspec_status'
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
@@ -114,13 +107,13 @@ RSpec.configure do |config|
   end
 end
 
-shared_examples_for "shared response" do
+shared_examples_for 'shared response' do
   xit 'has an auth in the header' do
     request = Array.new(subject).first.response
   end
 end
 
-shared_examples_for ".list" do
+shared_examples_for '.list' do
   before do
     stub_resource(described_class, :list)
   end
@@ -135,10 +128,10 @@ shared_examples_for ".list" do
     expect(subject.first).to be_an_instance_of described_class
   end
 
-  it_behaves_like "shared response"
+  it_behaves_like 'shared response'
 end
 
-shared_examples_for ".retrieve" do
+shared_examples_for '.retrieve' do
   before do
     stub_resource(described_class, :retrieve, url: "#{described_class.resource_path}/1")
   end
@@ -153,12 +146,12 @@ shared_examples_for ".retrieve" do
     expect(subject.response.uri.path).to eq("#{described_class.resource_path}/1")
   end
 
-  it_behaves_like "shared response"
+  it_behaves_like 'shared response'
 end
 
-shared_examples_for ".create" do
+shared_examples_for '.create' do
   before do
-    stub_resource(described_class, :create, url: "#{described_class.resource_path}", method: :post)
+    stub_resource(described_class, :create, url: described_class.resource_path.to_s, method: :post)
   end
 
   subject { described_class.create({}) }
@@ -168,13 +161,13 @@ shared_examples_for ".create" do
   end
 
   it 'hits the resource path' do
-    expect(subject.response.uri.path).to eq("#{described_class.resource_path}")
+    expect(subject.response.uri.path).to eq(described_class.resource_path.to_s)
   end
 
-  it_behaves_like "shared response"
+  it_behaves_like 'shared response'
 end
 
-shared_examples_for ".delete" do
+shared_examples_for '.delete' do
   before do
     stub_resource(described_class, :delete, url: "#{described_class.resource_path}/1", method: :delete)
   end
@@ -189,6 +182,5 @@ shared_examples_for ".delete" do
     expect(subject.response.uri.path).to eq("#{described_class.resource_path}/1")
   end
 
-  it_behaves_like "shared response"
+  it_behaves_like 'shared response'
 end
-

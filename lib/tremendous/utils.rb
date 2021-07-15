@@ -1,10 +1,10 @@
+# frozen_string_literal: true
+
 module Tremendous
   class Utils
     class << self
       def build_object(response, object_name)
-        if response.is_a?(Error)
-          return response
-        end
+        return response if response.is_a?(Error)
 
         if response.parsed_response[object_name.collection_key]
           response.parsed_response[object_name.collection_key].map { |obj| object_name.new(obj, response: response) }

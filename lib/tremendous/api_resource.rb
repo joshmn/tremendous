@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module Tremendous
   class APIResource
     def self.resource_path
-      "/api/v2/#{self.collection_key}"
+      "/api/v2/#{collection_key}"
     end
 
     def self.resource_key
-      self.name.demodulize.underscore
+      name.demodulize.underscore
     end
 
     def self.collection_key
-      self.name.demodulize.underscore.pluralize
+      name.demodulize.underscore.pluralize
     end
 
     def self.get(url, **args)
@@ -31,7 +33,7 @@ module Tremendous
     def self.member_method(name, verb, endpoint = nil, &block)
       member_endpoints[name] = verb
       define_singleton_method(name) do |id, **args|
-        url = [resource_path, id, endpoint || name].join("/")
+        url = [resource_path, id, endpoint || name].join('/')
         resp = send(verb, url, **args)
         if block
           block.call(resp)
@@ -44,7 +46,7 @@ module Tremendous
     def self.member_action(name, verb, endpoint = nil, &block)
       member_endpoints[name] = verb
       define_method(name) do |**args|
-        url = [self.class.resource_path, id, endpoint || name].join("/")
+        url = [self.class.resource_path, id, endpoint || name].join('/')
         resp = self.class.send(verb, url, **args)
         if block
           block.call(resp)
@@ -55,15 +57,16 @@ module Tremendous
     end
 
     def initialize(parsed_response, options = {})
-      self.class.attr_reader *parsed_response.keys
+      self.class.attr_reader(*parsed_response.keys)
       self.class.attr_reader :response
       @response = options[:response]
-      parsed_response.each do |k,v|
-        if v.is_a?(Hash)
+      parsed_response.each do |k, v|
+        case v
+        when Hash
           v.each do |attr, value|
             instance_variable_set(:"@#{attr}", value)
           end
-        elsif v.is_a?(Array)
+        when Array
           objs = v.map do |thing|
             if thing.is_a?(Hash)
               struct = Class.new(Struct.new(*thing.keys.map(&:to_sym)))

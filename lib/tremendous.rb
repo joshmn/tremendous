@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'http'
 require 'json'
 require 'active_support/inflector'
@@ -7,16 +9,17 @@ require 'tremendous/error'
 require 'tremendous/config'
 require 'tremendous/client'
 
-class HTTP::Response
-  def parsed_response
-    JSON.parse(to_s)
+module HTTP
+  class Response
+    def parsed_response
+      JSON.parse(to_s)
+    end
   end
 end
 
-
 require 'tremendous/resources'
 module Tremendous
-  def self.configure(&block)
+  def self.configure
     yield config
   end
 
