@@ -1,7 +1,7 @@
 require_relative 'lib/tremendous/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "Tremendous"
+  spec.name          = "tremendous"
   spec.version       = Tremendous::VERSION
   spec.authors       = ["Josh Brody"]
   spec.email         = ["git@josh.mn"]
