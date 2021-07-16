@@ -1,8 +1,6 @@
 # Tremendous
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/tremendous`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Ruby API client for [Tremendous.com](https://tremendous.com).
 
 ## Installation
 
@@ -22,18 +20,197 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Grab your API key and configure your client:
 
-## Development
+```ruby
+Tremendous.configure do |config|
+  config.endpoint = "https://testflight.tremendous.com"
+  config.api_key = "TEST_longtokenstring"
+end
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+## Rewards
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+### Retrieve
 
-## Contributing
+```ruby
+reward = Tremendous::Reward.retrieve(id)
+reward.id 
+...
+```
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/tremendous. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/tremendous/blob/master/CODE_OF_CONDUCT.md).
+### List
 
+```ruby
+rewards = Tremendous::Reward.list
+rewards.each do |reward|
+  puts reward.id 
+end
+```
+
+## Organizations
+
+### Retrieve
+
+```ruby
+organization = Tremendous::Organization.retrieve(id)
+organization.id 
+...
+```
+
+### Create
+
+```ruby
+params = {}
+Tremendous::Organization.create(params)
+```
+
+### List
+
+```ruby
+organizations = Tremendous::Organization.list
+organizations.each do |organization|
+  puts organization.id 
+end
+```
+
+## Products
+
+### List
+
+```ruby
+products = Tremendous::Product.list
+products.each do |product|
+  puts product.id 
+end
+
+```
+
+## Fields
+
+### List
+
+```ruby
+fields = Tremendous::Field.list
+fields.each do |field|
+  puts field.id 
+end
+```
+
+## Campaigns
+
+### List
+
+```ruby
+campaigns = Tremendous::Campaign.list
+campaigns.each do |campaign|
+  puts campaign.id 
+end
+
+```
+
+## Funding Sources
+
+### Retrieve
+
+```ruby
+funding_source = Tremendous::FundingSource.retrieve(id)
+funding_source.id 
+...
+```
+
+### List
+
+```ruby
+funding_sources = Tremendous::FundingSource.list
+funding_sources.each do |funding_source|
+  puts funding_source.id 
+end
+```
+
+## Invoices
+
+### Retrieve
+
+```ruby
+invoice = Tremendous::Invoice.retrieve(id)
+invoice.id 
+...
+```
+
+### Destroy
+
+```ruby
+Tremendous::Invoice.destroy(id)
+```
+
+### Create
+
+```ruby
+params = {}
+Tremendous::Invoice.create(params)
+```
+
+### List
+
+```ruby
+invoices = Tremendous::Invoice.list
+invoices.each do |invoice|
+  puts invoice.id 
+end
+```
+
+## Members
+
+### Retrieve
+
+```ruby
+member = Tremendous::Member.retrieve(id)
+member.id 
+...
+```
+
+### Create
+
+```ruby
+params = {}
+Tremendous::Member.create(params)
+```
+
+### List
+
+```ruby
+members = Tremendous::Member.list
+members.each do |member|
+  puts member.id 
+end
+```
+
+## Orders
+
+### Retrieve
+
+```ruby
+order = Tremendous::Order.retrieve(id)
+order.id 
+...
+```
+
+### Create
+
+```ruby
+params = {}
+Tremendous::Order.create(params)
+```
+
+### List
+
+```ruby
+orders = Tremendous::Order.list
+orders.each do |order|
+  puts order.id 
+end
+```
 
 ## License
 
@@ -41,4 +218,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Tremendous project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/tremendous/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in this project's codebase, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/joshmn/tremendous/blob/master/CODE_OF_CONDUCT.md).

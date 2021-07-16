@@ -1,0 +1,130 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'tremendous'
+require 'pry'
+
+raw = <<STR
+# Tremendous
+
+Ruby API client for [Tremendous.com](https://tremendous.com).
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'tremendous'
+```
+
+And then execute:
+
+    $ bundle install
+
+Or install it yourself as:
+
+    $ gem install tremendous
+
+## Usage
+
+Grab your API key and configure your client:
+
+```ruby
+Tremendous.configure do |config|
+  config.endpoint = "https://testflight.tremendous.com"
+  config.api_key = "TEST_longtokenstring"
+end
+```
+
+{api}
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## Code of Conduct
+
+Everyone interacting in the Tremendous project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/tremendous/blob/master/CODE_OF_CONDUCT.md).
+STR
+
+class Readme
+  def self.write(resource)
+    new(resource).write
+  end
+
+  def initialize(resource)
+    @resource = resource
+  end
+
+  def write
+    str = <<STR.chomp
+## #{@resource.to_s.demodulize.pluralize.titleize}
+
+
+STR
+    if @resource.respond_to?(:retrieve)
+      str << <<STR
+### Retrieve
+
+```ruby
+#{@resource.resource_key} = #{@resource}.retrieve(id)
+#{@resource.resource_key}.id 
+...
+```
+
+STR
+      end
+    if @resource.respond_to?(:destroy)
+      str << <<STR
+### Destroy
+
+```ruby
+#{@resource}.destroy(id)
+```
+
+STR
+      end
+    if @resource.respond_to?(:create)
+      str << <<STR
+### Create
+
+```ruby
+params = {}
+#{@resource}.create(params)
+```
+
+STR
+      end
+    if @resource.respond_to?(:list)
+      str << <<STR
+### List
+
+```ruby
+#{@resource.collection_key} = #{@resource}.list
+#{@resource.collection_key}.each do |#{@resource.resource_key}|
+  puts #{@resource.resource_key}.id 
+end
+
+```
+
+STR
+    end
+    str
+  end
+end
+consts = Tremendous.constants.select do |const|
+  klass = ("Tremendous::#{const}").constantize
+  begin
+    klass.ancestors.include?(Tremendous::APIResource) && klass != Tremendous::APIResource
+  rescue => _
+    false
+  end
+end
+
+content = ""
+consts.each do |const|
+  content << Readme.write("Tremendous::#{const}".constantize)
+end
+
+file = raw.gsub!("{api}", content)
+File.write(__dir__ + "/../README.md", file)
